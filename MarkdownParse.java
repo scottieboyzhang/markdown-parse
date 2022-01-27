@@ -5,18 +5,28 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class MarkdownParse {
-    public static ArrayList<String> getLinks(String markdown) {
+    public static ArrayList<String> getLinks(String markdown) throws IOException {
         ArrayList<String> toReturn = new ArrayList<>();
         // find the next [, then find the ], then find the (, then take up to
         // the next )
         int currentIndex = 0;
+        int previousIndex = -1;
         while(currentIndex < markdown.length()) {
+            previousIndex = currentIndex;
+            
             int nextOpenBracket = markdown.indexOf("[", currentIndex);
             int nextCloseBracket = markdown.indexOf("]", nextOpenBracket);
             int openParen = markdown.indexOf("(", nextCloseBracket);
             int closeParen = markdown.indexOf(")", openParen);
             toReturn.add(markdown.substring(openParen + 1, closeParen));
             currentIndex = closeParen + 1;
+
+            if (currentIndex < previousIndex) {
+                throw new IOException();
+            }
+            
+
+            //System.out.println(currentIndex + " " + markdown.charAt(currentIndex-1));
         }
         return toReturn;
     }
